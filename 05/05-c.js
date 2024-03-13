@@ -3,7 +3,6 @@ const { json } = require('stream/consumers');
 let command = process.argv[2];
 let name = process.argv[3];
 let arg4 = process.argv[4];
-
 function Callback(err) {
     if(err){
         console.log('ERR: ', err);
@@ -34,6 +33,7 @@ function unlinkCallback(err) {
     }
 }
 function addrecord(){
+        
     fs.readFile("database.json", 'utf8', function readCallback(err , filedata){
         if(err){
             console.log('ERR: ', err);
@@ -54,7 +54,46 @@ function addrecord(){
         }
     });
 }
-
+function readrecord(){
+    fs.readFile("database.json", 'utf8', function readCallback(err , filedata){
+        if(err){
+            console.log('ERR: ', err);
+        }
+        else
+        {
+            filedata =JSON.parse(filedata);
+            for(let i=0;i<filedata.record.length;i++)
+            {
+                if(filedata.record[i].id==name)
+                {
+                 console.log(filedata.record[i]);
+                }
+            }
+        }
+    });
+}
+function deleterecord(){
+    fs.readFile("database.json", 'utf8', function readCallback(err , filedata){
+        if(err){
+            console.log('ERR: ', err);
+        }
+        else
+        {
+            filedata =JSON.parse(filedata);
+            for(let i=0;i<filedata.record.length;i++)
+            {
+                if(filedata.record[i].id==name)
+                {
+                    let x=filedata.record.splice(i,1);
+                    console.log(i, x);
+                    filedata = JSON.stringify(filedata);
+                    fs.writeFile("database.json", filedata, Callback);
+                    break;
+                }
+            }
+        }
+    });
+}
 let commands = {
     create: function(){
         fs.writeFile(name, arg4, Callback);
@@ -71,7 +110,9 @@ let commands = {
     read: function(){
         fs.readFile(name, 'utf8', readCallback);
     },
-    addrecord: addrecord()
+    addrecord: addrecord(),
+    readrecord: readrecord(),
+    deleterecord: deleterecord()
 }
 
 commands[command]();

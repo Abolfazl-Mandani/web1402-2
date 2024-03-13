@@ -3,7 +3,6 @@ const { json } = require('stream/consumers');
 let command = process.argv[2];
 let name = process.argv[3];
 let arg4 = process.argv[4];
-
 function Callback(err) {
     if(err){
         console.log('ERR: ', err);
@@ -54,6 +53,24 @@ function addrecord(){
         }
     });
 }
+function readrecord(){
+    fs.readFile("database.json", 'utf8', function readCallback(err , filedata){
+        if(err){
+            console.log('ERR: ', err);
+        }
+        else
+        {
+            filedata =JSON.parse(filedata);
+            for(let i=0;i<filedata.record.length;i++)
+            {
+                if(filedata.record[i].id==name)
+                {
+                 console.log(filedata.record[i]);
+                }
+            }
+        }
+    });
+}
 
 let commands = {
     create: function(){
@@ -71,7 +88,9 @@ let commands = {
     read: function(){
         fs.readFile(name, 'utf8', readCallback);
     },
-    addrecord: addrecord()
+    addrecord: addrecord(),
+    readrecord: readrecord()
+        
 }
 
 commands[command]();
